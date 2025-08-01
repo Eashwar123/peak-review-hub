@@ -5,8 +5,19 @@ export const Hero = () => {
   return (
     <section className="relative py-20 bg-gradient-hero flex items-center justify-center text-center px-4 overflow-hidden">
       
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url('/lovable-uploads/487e9f5f-1156-4889-ab45-6c05e3bcc2fa.png')`
+        }}
+      />
+      
+      {/* Dark overlay for text readability */}
+      <div className="absolute inset-0 bg-black/70" />
+      
       {/* Background decorative elements */}
-      <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 opacity-5">
         <div className="absolute top-20 left-20 w-64 h-64 bg-primary rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-accent rounded-full blur-3xl"></div>
       </div>
