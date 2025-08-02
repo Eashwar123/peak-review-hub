@@ -71,7 +71,7 @@ export const ReviewForm = ({ onSubmitReview }: ReviewFormProps) => {
       });
 
       const webhookResponse = await response.json();
-      setWebhookRating(webhookResponse.rating || 'No rating provided');
+      setWebhookRating(webhookResponse.output || 'No rating provided');
 
       // Add to local state
       onSubmitReview(reviewData);
