@@ -27,6 +27,7 @@ export const ReviewForm = ({ onSubmitReview }: ReviewFormProps) => {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [webhookRating, setWebhookRating] = useState<string | null>(null);
   const { toast } = useToast();
 
   const categories = [
@@ -56,19 +57,21 @@ export const ReviewForm = ({ onSubmitReview }: ReviewFormProps) => {
     };
 
     try {
-      // Send to webhook
-      await fetch('https://eashwarapsingikar.app.n8n.cloud/webhook-test/bb5cf3bc-c0bf-4750-9a6c-227244461ced', {
+      // Send to webhook and wait for response
+      const response = await fetch('https://eashwarapsingikar.app.n8n.cloud/webhook-test/bb5cf3bc-c0bf-4750-9a6c-227244461ced', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        mode: 'no-cors',
         body: JSON.stringify({
           ...reviewData,
           timestamp: new Date().toISOString(),
           triggered_from: window.location.origin,
         }),
       });
+
+      const webhookResponse = await response.json();
+      setWebhookRating(webhookResponse.rating || 'No rating provided');
 
       // Add to local state
       onSubmitReview(reviewData);
@@ -170,6 +173,16 @@ export const ReviewForm = ({ onSubmitReview }: ReviewFormProps) => {
         >
           {isSubmitting ? "Posting..." : "Post Review"}
         </Button>
+
+        {/* Webhook Response Display */}
+        {webhookRating && (
+          <div className="mt-6 p-4 bg-secondary/30 border border-border rounded-lg">
+            <p className="text-sm font-medium text-muted-foreground mb-1">
+              Here is the rating of your review:
+            </p>
+            <p className="text-primary font-semibold">{webhookRating}</p>
+          </div>
+        )}
       </form>
     </Card>
   );
