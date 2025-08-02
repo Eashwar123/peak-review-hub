@@ -2,6 +2,8 @@
 
 ## Project info
 
+**Published Lovable URL**: https://peak-review-hub.lovable.app/
+
 **URL**: https://lovable.dev/projects/ac9d31fa-4fd3-4619-9217-b77030b2ff34
 
 ## How can I edit this code?
