@@ -58,7 +58,7 @@ export const ReviewForm = ({ onSubmitReview }: ReviewFormProps) => {
 
     try {
       // Send to webhook and wait for response
-      const response = await fetch('https://eashwarapsingikar.app.n8n.cloud/webhook-test/bb5cf3bc-c0bf-4750-9a6c-227244461ced', {
+      const response = await fetch('https://eashwarapsingikar.app.n8n.cloud/webhook/bb5cf3bc-c0bf-4750-9a6c-227244461ced', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
