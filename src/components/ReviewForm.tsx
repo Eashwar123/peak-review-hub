@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Star } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface Review {
   id: string;
@@ -25,6 +26,8 @@ export const ReviewForm = ({ onSubmitReview }: ReviewFormProps) => {
   const [review, setReview] = useState("");
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   const categories = [
     "Movie",
@@ -36,25 +39,60 @@ export const ReviewForm = ({ onSubmitReview }: ReviewFormProps) => {
     "Album/Music"
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!category || !title || !review || rating === 0) {
       return;
     }
 
-    onSubmitReview({
+    setIsSubmitting(true);
+
+    const reviewData = {
       category,
       title,
       review,
       rating
-    });
+    };
 
-    // Reset form
-    setCategory("");
-    setTitle("");
-    setReview("");
-    setRating(0);
+    try {
+      // Send to webhook
+      await fetch('https://eashwarapsingikar.app.n8n.cloud/webhook-test/bb5cf3bc-c0bf-4750-9a6c-227244461ced', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        mode: 'no-cors',
+        body: JSON.stringify({
+          ...reviewData,
+          timestamp: new Date().toISOString(),
+          triggered_from: window.location.origin,
+        }),
+      });
+
+      // Add to local state
+      onSubmitReview(reviewData);
+
+      // Reset form
+      setCategory("");
+      setTitle("");
+      setReview("");
+      setRating(0);
+
+      toast({
+        title: "Review Posted",
+        description: "Your review has been submitted successfully!",
+      });
+    } catch (error) {
+      console.error('Error sending review to webhook:', error);
+      toast({
+        title: "Error",
+        description: "Failed to submit review. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -128,9 +166,9 @@ export const ReviewForm = ({ onSubmitReview }: ReviewFormProps) => {
           type="submit" 
           variant="hero" 
           className="w-full"
-          disabled={!category || !title || !review || rating === 0}
+          disabled={!category || !title || !review || rating === 0 || isSubmitting}
         >
-          Post Review
+          {isSubmitting ? "Posting..." : "Post Review"}
         </Button>
       </form>
     </Card>
